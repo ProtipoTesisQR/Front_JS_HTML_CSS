@@ -1,3 +1,5 @@
+import getLocation from "./geolocation.js"
+
 const main = (function(){
     //Variables
     const state = {
@@ -11,6 +13,7 @@ const main = (function(){
     const div_error = document.querySelector("#error-message")
     //Init
     function init(){
+        getLocation(state)
         console.log(state);
         if(window.location.search.includes("token")){
             window.localStorage.setItem("qr_token", window.location.search.split("token=")[1])

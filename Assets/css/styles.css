@@ -161,11 +161,16 @@
       letter-spacing: -1px;
   }
 
+  div img{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
   img{
-    height: 2.5em;
+    height: 20em;
   }
 
-  a {
+  a, h1{
     color: #D9303E;
     text-decoration: unset;
   }
@@ -287,7 +292,7 @@
       align-items: center;
   }
   
-  .field input {
+  .field input, .field select{
       font-size: 16px;
       line-height: 28px;
       padding: 8px 16px;
