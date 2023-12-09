@@ -49,7 +49,7 @@
                 </div>
                 <div class="box-root padding-top--24 flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9">
                     <div class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center">
-                        <h1>Generador QR Asistencia</h1>
+                        <h1>Registro de asistencia</h1>
                     </div>
                     <div class="formbg-outer">
                         <div class="formbg">
@@ -94,6 +94,15 @@
                             </div>
                         </div>
                     </div>
+                    <div id="success-message" class="modal absolute-center modal-closed">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <p>Su asistencia fué registrada correctamente</p>
+                            <div>
+                                <button class="confirm">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,7 +110,8 @@
     </body>
     <!-- Scripts -->
     <script type="module" src="Assets/js/geolocation.js"></script>
-    <script type="module" src="Assets/js/loginAlumno.js"></script>
+    <script type="module" src="Assets/js/ApiCalls.js"></script>
+    <script type="module" src="Assets/js/login.js"></script>
 
 </body>
 

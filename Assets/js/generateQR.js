@@ -3,7 +3,7 @@ const main = (function(){
      const state = {
         qr_token: ""
     }
-    const base_url = ""
+    const base_url = "http://127.0.0.1:5500"
 
     const start_time = [
         "18:50",
@@ -33,17 +33,20 @@ const main = (function(){
     //Init
     function init(){
         input_date.value = ''
-        const session_email = sessionStorage.getItem('email')
-        const session_password = sessionStorage.getItem('password')
-        // const classes = await getClasses({session_email, session_password})
-        // renderClasses(classes)
+        const id_docente = sessionStorage.getItem('id_docente')
+        // const classes = await getClasses(id_docente)
+        // renderClasses(classes)     
         renderClasses(test_cursos)
     }
 
     //Event Handlers
     select_class.addEventListener("change", (e)=>{
         e.preventDefault()
-        if((e.target.firstElementChild.value == 'default')) e.target.remove("default")
+        const target = (e.target)
+        const first_option = (target.firstElementChild)
+        if((first_option).value == 'default'){
+            target.remove(Number(Array.from(target.options).indexOf(first_option)))
+        }
     })
     input_date.addEventListener("change", (e)=>{
         e.preventDefault()
@@ -52,14 +55,22 @@ const main = (function(){
     })
     select_start_time.addEventListener("change", (e)=>{
         e.preventDefault()
-        if((e.target.firstElementChild.value == 'default')) e.target.remove("default")
-        const options = Array.from(e.target.children)
+        const target = (e.target)
+        const first_option = (target.firstElementChild)
+        if((first_option).value == 'default') {
+            target.remove(Number(Array.from(target.options).indexOf(first_option)))
+        }
+        const options = Array.from(target.children)
         options.forEach(option=>{
-            if(option.selected)
-                renderFinishTime(option.value)
+            if((option).selected)
+                renderFinishTime((option).value)
         })
     })
 
+    form.addEventListener("submit", (e)=>{
+        e.preventDefault()
+        renderQr("token_test")
+    })
 
 
     async function getClasses(payload){
@@ -69,12 +80,13 @@ const main = (function(){
     function renderClasses(classes){
         classes.forEach((class_name) => {
             const option = document.createElement('option')
-            option.value = class_name.id
-            option.innerHTML = class_name.name
-            select_class.appendChild(option)
+            option.value = class_name?.id
+            option.innerHTML = class_name?.name
+            select_class?.appendChild(option)
         });
     }
     function renderStartTime(){
+        if (select_start_time.options.length > 1) return
         start_time.forEach((time) => {
             const option = document.createElement('option')
             option.value = start_time.indexOf(time)
@@ -83,11 +95,16 @@ const main = (function(){
         });
     }
     function renderFinishTime(start_index){
-        select_finish_time.remove(select_finish_time.firstElementChild.value)
+        select_finish_time.remove(Number((select_finish_time.firstElementChild).value))
         const option = document.createElement('option')
         option.value = finish_time[start_index]
         option.innerHTML = finish_time[start_index]
         select_finish_time.appendChild(option)
+    }
+
+    function renderQr(token){
+        const div_qr = document.querySelector(".Qr")
+        new QRCode(div_qr,`${base_url}/Login.html?token=${token}`)
     }
 
     return init()
