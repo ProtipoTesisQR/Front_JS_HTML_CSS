@@ -1,3 +1,7 @@
+import {getClasses, createQR} from "./ApiCalls.js"
+import {hideMessage, showMessage} from "./generalFunctions.js"
+
+
 const main = (function(){
      //Variables
      const state = {
@@ -31,12 +35,18 @@ const main = (function(){
     const input_date = document.getElementsByName("date")[0]
 
     //Init
-    function init(){
+    async function init(){
         input_date.value = ''
         const id_docente = sessionStorage.getItem('id_docente')
-        // const classes = await getClasses(id_docente)
-        // renderClasses(classes)     
-        renderClasses(test_cursos)
+        const classes = await getClasses(id_docente)
+        if(classes.length > 0){
+            hideMessage("warning")
+            renderClasses(classes)     
+        }
+        else{
+            showMessage("No se encontraron cursos asignados a este usuario","warning")
+        }
+        // renderClasses(test_cursos)
     }
 
     //Event Handlers
@@ -47,10 +57,11 @@ const main = (function(){
         if((first_option).value == 'default'){
             target.remove(Number(Array.from(target.options).indexOf(first_option)))
         }
+        input_date.disabled = false
     })
     input_date.addEventListener("change", (e)=>{
         e.preventDefault()
-        
+        select_start_time.disabled = false
         renderStartTime()
     })
     select_start_time.addEventListener("change", (e)=>{
@@ -60,28 +71,27 @@ const main = (function(){
         if((first_option).value == 'default') {
             target.remove(Number(Array.from(target.options).indexOf(first_option)))
         }
+        select_finish_time.disabled = false
         const options = Array.from(target.children)
         options.forEach(option=>{
             if((option).selected)
-                renderFinishTime((option).value)
+            renderFinishTime((option).value)
         })
     })
 
-    form.addEventListener("submit", (e)=>{
+    form.addEventListener("submit", async (e)=>{
         e.preventDefault()
-        renderQr("token_test")
+        const payload = createPayload()
+        const result = await createQR(payload)
+        console.log(result.token);
+        renderQr(result.token)
     })
 
-
-    async function getClasses(payload){
-        //consulta api para obtener cursos de docentes
-    }
-
     function renderClasses(classes){
-        classes.forEach((class_name) => {
+        classes.forEach((class_) => {
             const option = document.createElement('option')
-            option.value = class_name?.id
-            option.innerHTML = class_name?.name
+            option.value = class_?.id
+            option.innerHTML = class_?.nombre
             select_class?.appendChild(option)
         });
     }
@@ -105,6 +115,15 @@ const main = (function(){
     function renderQr(token){
         const div_qr = document.querySelector(".Qr")
         new QRCode(div_qr,`${base_url}/Login.html?token=${token}`)
+    }
+
+    function createPayload(){
+        return {
+            "idCurso": `${Array.from(document.getElementsByName("class")[0].options).filter(option=> option.selected)[0].value}`,
+            "date": `${document.getElementsByName("date")[0].value}`,
+            "startTime": `${Array.from(document.getElementsByName("start_time")[0]).filter(option=> option.selected)[0].text.concat(':','00')}`,
+            "finishTime": `${Array.from(document.getElementsByName("finish_time")[0]).filter(option=> option.selected)[0].text.concat(':','00')}`
+          }     
     }
 
     return init()

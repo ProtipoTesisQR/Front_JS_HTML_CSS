@@ -305,6 +305,10 @@
     opacity: 1;
   }
 
+  select:disabled, input:disabled{
+    background-color: rgb(223, 223, 223);
+  }
+
   @media (max-width: 1250px) {
     .modal-content {
       background-color: #fefefe;

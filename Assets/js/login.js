@@ -1,20 +1,20 @@
 import getLocation from "./geolocation.js"
 import {validateUser} from "./ApiCalls.js"
+import {hideMessage, showMessage} from "./generalFunctions.js"
 
 const main = (function(){
     //Variables
     const state = {
         qr_scanned: false,
-        qr_token: "",
+        qr_token: null,
         is_docente: false,
         valid_geolocation: false,
-        latitude : "",
-        longitude : ""
+        latitude : "-33.45385760740594",
+        longitude : "-70.66269158056573"
     }
 
     //Dom variables
     const form = document.querySelector("#stripe-login")
-    const div_error = document.querySelector("#error-message")
     const close_modal = document.getElementsByClassName("close")[0]
     const close_modal_btn = document.querySelector(".confirm")
     const success_message = document.querySelector(".modal")
@@ -29,8 +29,7 @@ const main = (function(){
             state.qr_scanned = true
             state.qr_token = String(localStorage.getItem("qr_token"))
         }
-        getLocation(state)
-        validateGeolocation()
+        // getLocation(state)
     }
     
     //Events
@@ -55,53 +54,63 @@ const main = (function(){
         else{
             hideMessage("warning")
         }
+        
+        // getLocation(state)
+        setDefaultLocation()
+        const payload = createPayload(email, password, state.qr_token, state.latitude, state.longitude)
+        
+        const result = await validateUser(payload)
 
-        /*
-        const result = await validateUser({email, password})
-
-        if(result.hasOwnProperty("validToken") && !Boolean(result.validToken)){
+        if(validateResponse(result, 'token')){
             showMessage("Por favor escanee el QR para registrar asistencia", "error")
             return
         }
-        else if(result.hasOwnProperty("validGeolocation") && !Boolean(result.validGeolocation)){
+        else if(validateResponse(result, 'geo')){
             showMessage("No es posible registrar la asistencia. Ubicacion fuera del rango definido", "error")
             return
         }
-        else if(result.hasOwnProperty("validUser") && !Boolean(result.validUser)){
+        else if(validateResponse(result, 'user')){
             showMessage("El usuario ingresado no existe, por favor valide sus credenciales", "error")
             return
         }
-        else if(result.hasOwnProperty("validUser") && Boolean(result.validUser) && !result.hasOwnProperty("idDocente")){
-            //Levantar aviso de asistencia registrada
-            localStorage.remove(qr_token)
+        else if(validateResponse(result, 'alumno')){
+            clearLocaleStorage()
+            clearState()
+            showSuccessMessage()
+            setTimeout(hideSuccessMessage, 3000)
         }
-        else if(result.hasOwnProperty("validUser") && Boolean(result.validUser) && result.hasOwnProperty("idDocente")){
+        else if(validateResponse(result, 'docente')){
             window.sessionStorage.setItem("id_docente",result.idDocente)
-            window.window.location.assign(`${window.location.origin}generateQR.html`)
-        }*/
+            window.window.location.assign(`${window.location.origin}/generateQR.html`)
+        }
 
-        clearLocaleStorage()
-        showSuccessMessage()
-        setTimeout(hideSuccessMessage, 3000)
     })
     
     close_modal.addEventListener("click", hideSuccessMessage)
     close_modal_btn.addEventListener("click", hideSuccessMessage)
 
     //functions
-    function showMessage(message, error_type){
-        const error_message_html = `<b>${message}</b>`
+    function validateResponse(result, opc){
 
-        div_error.innerHTML = error_message_html
-        div_error.classList.add(`${error_type}`)
-        div_error.classList.remove("hidden")
-    }
-    function hideMessage(error_type){
-        div_error.innerHTML = ""
-        div_error.classList.remove(`${error_type}`)
-        div_error.classList.add("hidden")
-    }
+        switch (opc) {
+            case 'token':
+                if(result.hasOwnProperty("validToken") && !Boolean(result.validToken) &&  result.hasOwnProperty("idDocente") && result.idDocente === null) return true
+                return false
+            case 'geo':
+                if(result.hasOwnProperty("validGeolocation") && !Boolean(result.validGeolocation)&&  result.hasOwnProperty("idDocente") && result.idDocente === null) return true
+                return false
+            case 'user':
+                if(result.hasOwnProperty("validUser") && !Boolean(result.validUser)) return true
+                return false
+            case 'alumno':
+                if(result.hasOwnProperty("validUser") && Boolean(result.validUser) && (!result.hasOwnProperty("idDocente") || result.hasOwnProperty("idDocente") && result.idDocente === null)) return true
+                return false
+            case 'docente':
+                if(result.hasOwnProperty("validToken") && !Boolean(result.validToken) &&  result.hasOwnProperty("idDocente") && result.idDocente !== null && result.hasOwnProperty("validUser") && Boolean(result.validUser)) return true
+                return false
+        }
 
+    }
     function showSuccessMessage(){
         success_message.classList.remove("modal-closed")
     }
@@ -122,10 +131,20 @@ const main = (function(){
         localStorage.removeItem("qr_token")
     }
 
-    function validateGeolocation(){
-
+    function createPayload(email, password, token, lat, long){
+        return {
+            "email": `${email}`,
+            "password":`${password}`,
+            "token":`${token}`,
+            "latitude":`${lat}`,
+            "longitude":`${long}`
+        }
     }
 
+    function setDefaultLocation(){
+        state.latitude = "-33.45385760740594",
+        state.longitude = "-70.66269158056573"
+    }
     return init()
 })
 
