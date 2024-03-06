@@ -112,7 +112,7 @@ const main = (function(){
     }
     function renderQr(token){
         const div_qr = document.querySelector(".Qr")
-        new QRCode(div_qr,`${base_url}${window.location.pathname}Login.html?token=${token}`)
+        new QRCode(div_qr,`${base_url}/${window.location.pathname.split("/")[1]}?token=${token}`)
     }
     function createPayload(){
         return {
