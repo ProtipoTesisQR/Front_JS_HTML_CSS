@@ -9,8 +9,10 @@ const main = (function(){
         qr_token: null,
         is_docente: false,
         valid_geolocation: false,
-        latitude : "-33.45385760740594",
-        longitude : "-70.66269158056573"
+        latitude : false,
+        longitude : false
+        // latitude : "-33.45385760740594",
+        // longitude : "-70.66269158056573"
     }
 
     //Dom variables
@@ -55,8 +57,8 @@ const main = (function(){
             hideMessage("warning")
         }
         
-        // getLocation(state)
-        setDefaultLocation()
+        getLocation(state)
+        //setDefaultLocation()
         const payload = createPayload(email, password, state.qr_token, state.latitude, state.longitude)
         
         const result = await validateUser(payload)
