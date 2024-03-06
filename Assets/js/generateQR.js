@@ -7,7 +7,7 @@ const main = (function(){
      const state = {
         qr_token: ""
     }
-    const base_url = "http://127.0.0.1:5500"
+    const base_url = window.location.origin
 
     const start_time = [
         "18:50",
@@ -33,11 +33,13 @@ const main = (function(){
     const select_start_time = document.getElementsByName("start_time")[0]
     const select_finish_time = document.getElementsByName("finish_time")[0]
     const input_date = document.getElementsByName("date")[0]
-
     //Init
     async function init(){
         input_date.value = ''
         const id_docente = sessionStorage.getItem('id_docente')
+        if(id_docente === null || id_docente === undefined){
+            window.window.location.assign(`${window.location.origin}/indexq.html`)
+        }
         const classes = await getClasses(id_docente)
         if(classes.length > 0){
             hideMessage("warning")
@@ -48,7 +50,6 @@ const main = (function(){
         }
         // renderClasses(test_cursos)
     }
-
     //Event Handlers
     select_class.addEventListener("change", (e)=>{
         e.preventDefault()
@@ -78,7 +79,6 @@ const main = (function(){
             renderFinishTime((option).value)
         })
     })
-
     form.addEventListener("submit", async (e)=>{
         e.preventDefault()
         const payload = createPayload()
@@ -86,7 +86,6 @@ const main = (function(){
         console.log(result.token);
         renderQr(result.token)
     })
-
     function renderClasses(classes){
         classes.forEach((class_) => {
             const option = document.createElement('option')
@@ -111,12 +110,10 @@ const main = (function(){
         option.innerHTML = finish_time[start_index]
         select_finish_time.appendChild(option)
     }
-
     function renderQr(token){
         const div_qr = document.querySelector(".Qr")
         new QRCode(div_qr,`${base_url}/Login.html?token=${token}`)
     }
-
     function createPayload(){
         return {
             "idCurso": `${Array.from(document.getElementsByName("class")[0].options).filter(option=> option.selected)[0].value}`,
@@ -125,9 +122,6 @@ const main = (function(){
             "finishTime": `${Array.from(document.getElementsByName("finish_time")[0]).filter(option=> option.selected)[0].text.concat(':','00')}`
           }     
     }
-
     return init()
 })
-
-
 main()

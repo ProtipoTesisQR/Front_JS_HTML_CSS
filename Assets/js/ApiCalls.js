@@ -1,4 +1,4 @@
-const base_url = "http://back-qr-tesis.us-east-2.elasticbeanstalk.com"
+const base_url = "back-java-springboot-production.up.railway.app"
 
 async function getClasses(docente_id){
     try {
