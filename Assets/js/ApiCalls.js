@@ -18,7 +18,7 @@ async function createQR(payload){
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-              },
+            },
             body: JSON.stringify(payload)
         })
         return await response.json()

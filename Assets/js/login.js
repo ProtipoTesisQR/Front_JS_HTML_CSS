@@ -81,7 +81,7 @@ const main = (function(){
         }
         else if(validateResponse(result, 'docente')){
             window.sessionStorage.setItem("id_docente",result.idDocente)
-            window.window.location.assign(`${window.location.origin}/generateQR.html`)
+            window.window.location.assign(`${window.location.origin}${window.location.pathname}/generateQR.html`)
         }
 
     })
