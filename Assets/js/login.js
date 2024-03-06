@@ -31,7 +31,7 @@ const main = (function(){
             state.qr_scanned = true
             state.qr_token = String(localStorage.getItem("qr_token"))
         }
-        // getLocation(state)
+        getLocation(state)
     }
     
     //Events
