@@ -1,4 +1,4 @@
-const base_url = "back-java-springboot-production.up.railway.app"
+const base_url = "https://back-java-springboot-production.up.railway.app"
 
 async function getClasses(docente_id){
     try {
