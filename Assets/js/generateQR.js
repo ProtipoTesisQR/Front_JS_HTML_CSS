@@ -38,7 +38,7 @@ const main = (function(){
         input_date.value = ''
         const id_docente = sessionStorage.getItem('id_docente')
         if(id_docente === null || id_docente === undefined){
-            window.window.location.assign(`${window.location.origin}/indexq.html`)
+            window.window.location.assign(`${window.location.origin}${window.location.pathname}index.html`)
         }
         const classes = await getClasses(id_docente)
         if(classes.length > 0){
