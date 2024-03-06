@@ -1,7 +1,7 @@
 import {getClasses, createQR} from "./ApiCalls.js"
 import {hideMessage, showMessage} from "./generalFunctions.js"
 
-
+console.log(window.location.pathname);
 const main = (function(){
      //Variables
      const state = {
@@ -112,7 +112,7 @@ const main = (function(){
     }
     function renderQr(token){
         const div_qr = document.querySelector(".Qr")
-        new QRCode(div_qr,`${base_url}/Login.html?token=${token}`)
+        new QRCode(div_qr,`${base_url}${window.location.pathname}Login.html?token=${token}`)
     }
     function createPayload(){
         return {
