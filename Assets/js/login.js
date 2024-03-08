@@ -65,14 +65,17 @@ const main = (function(){
 
         if(validateResponse(result, 'token')){
             showMessage("Por favor escanee el QR para registrar asistencia", "error")
+            clearLocaleStorage()
             return
         }
         else if(validateResponse(result, 'geo')){
             showMessage("No es posible registrar la asistencia. Ubicacion fuera del rango definido", "error")
+            clearLocaleStorage()
             return
         }
         else if(validateResponse(result, 'user')){
             showMessage("El usuario ingresado no existe, por favor valide sus credenciales", "error")
+            clearLocaleStorage()
             return
         }
         else if(validateResponse(result, 'alumno')){
